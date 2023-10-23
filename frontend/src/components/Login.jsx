@@ -43,8 +43,7 @@ const Login = () => {
       .min(3)
       .max(20),
     password: yup.string().trim()
-      .required()
-      .min(6),
+      .required(),
   });
 
   const [authFailed, setAuthFailed] = useState(false);
@@ -90,6 +89,7 @@ const Login = () => {
                     value={formik.values.username}
                     ref={inputRef}
                   />
+                  <Form.Label className="form-label">Пользователь</Form.Label>
                 </Form.Group>
                 <Form.Group className="form-floating mb-4">
                   <Form.Control
@@ -102,6 +102,10 @@ const Login = () => {
                     onChange={formik.handleChange}
                     value={formik.values.password}
                   />
+                  <Form.Label className="form-label">Пароль</Form.Label>
+                  <Form.Control.Feedback type="invalid" tooltip>
+                    Неверные имя пользователя или пароль
+                  </Form.Control.Feedback>
                 </Form.Group>
                 <Button className="w-100 mb-3" variant="outline-primary" type="submit">Войти</Button>
               </Form>
