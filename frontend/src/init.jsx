@@ -1,19 +1,20 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+/* eslint-disable react/jsx-no-constructed-context-values */
 import React from 'react';
-import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { io } from 'socket.io-client';
 import { ToastContainer } from 'react-toastify';
+// выше будет + импорт toast
 import 'react-toastify/dist/ReactToastify.css';
 import { ErrorBoundary, Provider as RollbarProvider } from '@rollbar/react';
-import { actions as messagesActions } from './slices/messagesSlice.js';
+import App from './App.jsx';
+import { actions as messagesActions } from './slices/MessageSlices.js';
+// import { actions as channelsActions } from './slices/channelSlices.js';
 import { ChatApiContext } from './contexts/index.jsx';
-import App from './components/App.jsx';
 import store from './slices/index.js';
 
 const socketTimeoutMs = 5000;
 
-const init = async () => {
+export default async () => {
   const socket = io();
   console.debug(`Subscribe for socket events (socket.id=${socket.id})`);
   socket
@@ -55,15 +56,3 @@ const init = async () => {
     </RollbarProvider>
   );
 };
-
-const app = async () => {
-  const vdom = await init();
-  const root = ReactDOM.createRoot(document.getElementById('root'));
-  root.render(
-    <React.StrictMode>
-      { vdom }
-    </React.StrictMode>,
-  );
-};
-
-app();

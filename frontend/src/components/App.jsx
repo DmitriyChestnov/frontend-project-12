@@ -5,6 +5,7 @@ import {
 import { Navbar, Container } from 'react-bootstrap';
 import Chat from './Chat.jsx';
 import Login from './Login.jsx';
+import SignUp from './SignUp.jsx';
 import NotFound from './NotFound.jsx';
 import routes from '../routes.js';
 import AuthContext, { useAuth } from '../contexts/index.jsx';
@@ -48,6 +49,7 @@ const App = () => (
         <Routes>
           <Route path="*" element={<NotFound />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route
             path="/"
             element={(
