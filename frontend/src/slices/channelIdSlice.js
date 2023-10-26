@@ -1,13 +1,15 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
+import { actions as channelsActions } from './channelsSlices.js';
+
 const defaultChannelId = 1;
 
 const initialState = {
   value: defaultChannelId,
 };
 
-const currentChannelIdSlice = createSlice({
+const channelIdSlice = createSlice({
   name: 'currentChannelId',
   initialState,
   reducers: {
@@ -18,7 +20,14 @@ const currentChannelIdSlice = createSlice({
       state.value = action.payload;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(channelsActions.removeChannel, (state, action) => {
+        const removedChannelId = action.payload;
+        if (state.value === removedChannelId) state.value = defaultChannelId;
+      });
+  },
 });
 
-export const { defaultCurrentChannelId, setCurrentChannelId } = currentChannelIdSlice.actions;
-export default currentChannelIdSlice.reducer;
+export const { defaultchannelId, setchannelId } = channelIdSlice.actions;
+export default channelIdSlice.reducer;
