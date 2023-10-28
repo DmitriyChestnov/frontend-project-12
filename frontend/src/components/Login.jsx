@@ -7,7 +7,7 @@ import {
 } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import tota from '../images/Tota.jpg';
+import logInPicture from '../assets/login.jpg';
 import { useAuth } from '../contexts/index.jsx';
 import routes from '../routes.js';
 
@@ -69,7 +69,7 @@ const LoginPage = () => {
             <div className="card-body row p-5">
               <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
                 <img
-                  src={tota}
+                  src={logInPicture}
                   alt="Welcome"
                   className="rounded-circle"
                 />
