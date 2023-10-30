@@ -3,12 +3,13 @@ import {
   BrowserRouter, Routes, Route, Link, Navigate,
 } from 'react-router-dom';
 import { Navbar, Container, Button } from 'react-bootstrap';
-import Chat from './Chat.jsx';
-import Login from './Login.jsx';
-import SignUp from './SignUp.jsx';
-import NotFound from './NotFound.jsx';
-import routes from '../routes.js';
+import { useTranslation } from 'react-i18next';
 import AuthContext, { useAuth } from '../contexts/index.jsx';
+import routes from '../routes.js';
+import NotFound from './NotFound.jsx';
+import Login from './Login.jsx';
+import Chat from './Chat.jsx';
+import SignUp from './SignUp.jsx';
 
 const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState(() => {
@@ -36,38 +37,41 @@ const PrivateRoute = ({ children }) => {
   const auth = useAuth();
   return auth.userData ? children : <Navigate to={routes.loginPage} />;
 };
-
 const AuthButton = () => {
   const auth = useAuth();
-  return auth.userData && <Button onClick={auth.logOut}>Выйти</Button>;
+  const { t } = useTranslation();
+  return auth.userData && <Button onClick={auth.logOut}>{t('login.logout')}</Button>;
 };
 
-const App = () => (
-  <AuthProvider>
-    <BrowserRouter>
-      <div className="d-flex flex-column vh-100">
-        <Navbar className="shadow-sm navbar-expand-lg navbar-light bg-white">
-          <Container>
-            <Navbar.Brand as={Link} to={routes.homePage}>Hexlet Chat</Navbar.Brand>
-            <AuthButton />
-          </Container>
-        </Navbar>
-        <Routes>
-          <Route path="*" element={<NotFound />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route
-            path="/"
-            element={(
-              <PrivateRoute>
-                <Chat />
-              </PrivateRoute>
-            )}
-          />
-        </Routes>
-      </div>
-    </BrowserRouter>
-  </AuthProvider>
-);
+const App = () => {
+  const { t } = useTranslation();
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="d-flex flex-column vh-100">
+          <Navbar className="shadow-sm navbar-expand-lg navbar-light bg-white">
+            <Container>
+              <Navbar.Brand as={Link} to={routes.homePage}>{t('chat')}</Navbar.Brand>
+              <AuthButton />
+            </Container>
+          </Navbar>
+          <Routes>
+            <Route path="*" element={<NotFound />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route
+              path="/"
+              element={(
+                <PrivateRoute>
+                  <Chat />
+                </PrivateRoute>
+              )}
+            />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+};
 
 export default App;

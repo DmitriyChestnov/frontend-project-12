@@ -4,26 +4,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Button, Card, Col, Container, FloatingLabel, Form, Image, Row, Stack,
 } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
-import signUpPictchure from '../assets/registration.jsx';
+import regPicture from '../assets/registration.jpg';
 import { useAuth } from '../contexts/index.jsx';
 import paths from '../routes.js';
 
-const validationSchema = Yup.object().shape({
-  username: Yup.string().trim()
-    .min(3, 'From 3 to 20 characters')
-    .max(20, 'From 3 to 20 characters')
-    .required('Required field'),
-  password: Yup.string().trim()
-    .min(6, 'At least 6 characters')
-    .required('Required field'),
-  passwordConfirmation: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Passwords must match')
-    .required('Required field'),
-});
-const useSubmit = (setSignupFailed) => {
+const useSubmit = (setSignupFailed, t) => {
   const navigate = useNavigate();
   const { logIn } = useAuth();
   return async (values) => {
@@ -36,12 +25,26 @@ const useSubmit = (setSignupFailed) => {
       if (!err.isAxiosError) throw err;
       console.error(err);
       if (err.response?.status === 409) setSignupFailed(true);
-      else toast.error('Ошибка соединения');
+      else toast.error(t('ConnectionError'));
     }
   };
 };
 
-const SignUp = () => {
+const SignupPage = () => {
+  const { t } = useTranslation();
+
+  const validationSchema = Yup.object().shape({
+    username: Yup.string().trim()
+      .min(3, t('login.symbolCount'))
+      .max(20, t('login.symbolCount'))
+      .required(t('login.requiredField')),
+    password: Yup.string().trim()
+      .min(6, t('login.minCountSymbols'))
+      .required(t('login.requiredField')),
+    passwordConfirmation: Yup.string()
+      .oneOf([Yup.ref('password'), null], t('login.matchPassword'))
+      .required(t('login.requiredField')),
+  });
   const [signUpFailed, setSignUpFailed] = useState(false);
 
   const inputRef = useRef();
@@ -55,7 +58,7 @@ const SignUp = () => {
       passwordConfirmation: '',
     },
     validationSchema,
-    onSubmit: useSubmit(setSignUpFailed),
+    onSubmit: useSubmit(setSignUpFailed, t),
   });
 
   return (
@@ -66,43 +69,47 @@ const SignUp = () => {
             <Card.Body className="p-5">
               <Row>
                 <Col className="d-flex align-items-center justify-content-center">
-                  <Image src={signUpPictchure} roundedCircle thumbnail />
+                  <Image src={regPicture} roundedCircle thumbnail />
                 </Col>
                 <Col>
                   <Form onSubmit={formik.handleSubmit}>
-                    <h1 className="text-center mb-4">Регистрация</h1>
+                    <h1 className="text-center mb-4">{t('login.registration')}</h1>
                     <fieldset disabled={formik.isSubmitting}>
                       <Stack gap={2}>
-                        <FloatingLabel controlId="floatingUsername" label="Имя пользователя" className="position-relative">
+                        <FloatingLabel
+                          controlId="floatingUsername"
+                          label={t('login.username')}
+                          className="position-relative"
+                        >
                           <Form.Control
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.username}
-                            placeholder="Имя пользователя"
+                            placeholder={t('login.username')}
                             name="username"
                             autoComplete="username"
-                            // eslint-disable-next-line max-len
-                            isInvalid={signUpFailed || (formik.touched.username && formik.errors.username)}
+                            isInvalid={signUpFailed
+                              || (formik.touched.username && formik.errors.username)}
                             ref={inputRef}
                           />
                           {signUpFailed && (
                           <Form.Control.Feedback type="invalid" tooltip className="position-absolute top-0 start-100">
-                            Такой пользователь уже зарегистрирован
+                            {t('login.userExist')}
                           </Form.Control.Feedback>
                           )}
                           {formik.errors.username && (
                           <Form.Control.Feedback type="invalid" tooltip>
-                            {formik.errors.username}
+                            {t(formik.errors.username)}
                           </Form.Control.Feedback>
                           )}
                         </FloatingLabel>
-                        <FloatingLabel controlId="floatingPassword" label="Пароль">
+                        <FloatingLabel controlId="floatingPassword" label={t('login.password')}>
                           <Form.Control
                             type="password"
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.password}
-                            placeholder="Пароль"
+                            placeholder={t('login.password')}
                             name="password"
                             autoComplete="current-password"
                             isInvalid={formik.touched.password && formik.errors.password}
@@ -117,7 +124,7 @@ const SignUp = () => {
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.passwordConfirmation}
-                            placeholder="Подтвердите пароль"
+                            placeholder={t('login.confirmPassword')}
                             name="passwordConfirmation"
                             autoComplete="current-passwordConfirmation"
                             isInvalid={formik.touched.passwordConfirmation
@@ -127,7 +134,7 @@ const SignUp = () => {
                             {formik.errors.passwordConfirmation}
                           </Form.Control.Feedback>
                         </FloatingLabel>
-                        <Button type="submit" variant="outline-primary">Регистрация</Button>
+                        <Button type="submit" variant="outline-primary">{t('login.registration')}</Button>
                       </Stack>
                     </fieldset>
                   </Form>
@@ -141,4 +148,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignupPage;

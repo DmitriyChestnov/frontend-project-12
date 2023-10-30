@@ -1,6 +1,6 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-import { actions as channelsActions } from './channelSlices.js';
+import { actions as channelsActions } from './channelsSlice.js';
 
 export const messagesAdapter = createEntityAdapter();
 const initialState = messagesAdapter.getInitialState();
