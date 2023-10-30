@@ -54,12 +54,14 @@ const Add = ({ onHide, channels }) => {
           <fieldset disabled={formik.isSubmitting}>
             <Stack gap={2}>
               <Form.Group controlId="formChannelName" className="position-relative">
-                <Form.Label visuallyHidden>{t('channels.channel')}</Form.Label>
+                <Form.Label visuallyHidden htmlFor="renameChannel">{t('channels.name')}</Form.Label>
                 <Form.Control
                   ref={inputRef}
                   onChange={formik.handleChange}
+                  placeholder={t('channels.name')}
                   value={formik.values.channelName}
                   data-testid="input-channelName"
+                  id="renameChannel"
                   name="channelName"
                   isInvalid={formik.touched.channelName && formik.errors.channelName}
                 />
@@ -68,7 +70,7 @@ const Add = ({ onHide, channels }) => {
                 </Form.Control.Feedback>
               </Form.Group>
               <div className="d-flex justify-content-end">
-                <Button onClick={onHide} variant="secondary" className="me-2">Отменить</Button>
+                <Button onClick={onHide} variant="secondary" className="me-2">{t('cancel')}</Button>
                 <Button type="submit" variant="primary">{t('messages.send')}</Button>
               </div>
             </Stack>

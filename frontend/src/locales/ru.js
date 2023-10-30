@@ -10,6 +10,7 @@ export default {
     },
     channels: {
       channels: 'Каналы',
+      channel: 'Канал',
       delete: 'Удалить',
       deleteChannel: 'Удалить канал',
       rename: 'Переименовать',
@@ -20,6 +21,8 @@ export default {
       renamed: 'Канал переименован',
       remove: 'Канал удалён',
       name: 'Имя канала',
+      action: 'Управление каналом',
+      AUS: 'Уверены?',
     },
     login: {
       login: 'Войти',
@@ -29,7 +32,7 @@ export default {
       password: 'Пароль',
       registration: 'Регистрация',
       register: 'Зарегистрироваться',
-      haventAcc: 'Нет аккаунта? ',
+      haventAcc: 'Нет аккаунта?',
       symbolCount: 'От 3 до 20 символов',
       requiredField: 'Обязательное поле',
       minCountSymbols: 'Не менее 6 символов',
@@ -41,9 +44,10 @@ export default {
     },
     connectionError: 'Ошибка соединения',
     cancel: 'Отменить',
-    AUS: 'Вы уверены?',
     notFound: 'Страница не найдена',
     CanGo: 'Но вы можете перейти ',
     toMainPage: 'на главную страницу',
+    notFoundError: 'неизвестная ошибка',
+    chat: 'Hexlet Chat',
   },
 };
