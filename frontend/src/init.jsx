@@ -72,7 +72,7 @@ export default async () => {
     renameChannel: (...args) => getSocketEmitPromise('renameChannel', ...args),
   };
   const rollbarConfig = {
-    accessToken: 'ddb3ed5b1157408dbc818544b535a2df',
+    accessToken: 'ae4d160e8f72463896e4500d04ee01cf',
     captureUncaught: true,
     environment: 'production',
   };
