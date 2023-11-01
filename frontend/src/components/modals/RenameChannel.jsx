@@ -1,76 +1,101 @@
-import { useFormik } from 'formik';
 import React, { useEffect, useRef } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
-import Stack from 'react-bootstrap/Stack';
-import * as Yup from 'yup';
+import { Modal, Form, Button } from 'react-bootstrap';
+import { useFormik } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { useChatApi } from '../../contexts/index.jsx';
+import { toast } from 'react-toastify';
+import { useRollbar } from '@rollbar/react';
+import { addChannelSchema } from '../../schemas/schemas';
+import { selectors as channelsSelectors } from '../../store/slices/channelsSlice';
+import { useSocket } from '../../hooks';
+import { actions as modalsActions } from '../../store/slices/modalsSlice';
 
-const Rename = ({ modalInfo: { item: channel }, onHide, channels }) => {
+const Rename = () => {
+  const channels = useSelector(channelsSelectors.selectChannelsNames);
+  const isOpened = useSelector((state) => state.modals.isOpened);
+  const targetId = useSelector((state) => state.modals.targetId);
   const { t } = useTranslation();
-  const validationSchema = (channelNames) => Yup.object().shape({
-    channelName: Yup.string().trim()
-      .min(3, t('login.symbolCount'))
-      .max(20, t('login.symbolCount'))
-      .required(t('login.requiredFiel'))
-      .notOneOf(channelNames, t('login.unique')),
-  });
-  const chatApi = useChatApi();
+  const chatApi = useSocket();
+  const dispatch = useDispatch();
+  const inputRef = useRef(null);
+  const channelName = useSelector((state) => channelsSelectors.selectById(state, targetId)).name;
+  const rollbar = useRollbar();
 
-  const inputRef = useRef();
   useEffect(() => {
-    inputRef.current.focus();
-  });
-  useEffect(() => {
-    inputRef.current.select();
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   }, []);
 
-  const channelNames = channels.map(({ name }) => name);
   const formik = useFormik({
-    initialValues: { channelName: channel.name },
-    validationSchema: validationSchema(channelNames),
-    onSubmit: async (values) => {
+    initialValues: {
+      body: channelName,
+    },
+    validationSchema: addChannelSchema(
+      channels,
+      t('modal.unique'),
+      t('modal.lengthChannelName'),
+    ),
+    onSubmit: async ({ body }) => {
       try {
-        await chatApi.renameChannel({ id: channel.id, name: values.channelName });
-        onHide();
-      } catch (err) {
-        console.error(err);
+        await chatApi.renameChannel({ id: targetId, name: body });
+        dispatch(modalsActions.close());
+        toast.success(t('success.renameChannel'));
+      } catch (error) {
+        toast.error(t('errors.channelRename'));
+        rollbar.error('renameChannel', error);
       }
     },
   });
 
-  return (
-    <Modal show centered onHide={onHide} keyboard>
-      <Modal.Header closeButton>
-        <Modal.Title>{t('channels.renameChannel')}</Modal.Title>
-      </Modal.Header>
+  const handleClose = () => dispatch(modalsActions.close());
+  const isInvalidName = formik.errors.body && formik.touched.body;
 
+  return (
+    <Modal show={isOpened} onHide={handleClose}>
+      <Modal.Header>
+        <Modal.Title>{t('modal.rename')}</Modal.Title>
+        <Button
+          type="button"
+          className="btn-close"
+          aria-label="Close"
+          onClick={handleClose}
+          data-bs-dismiss="modal"
+        />
+      </Modal.Header>
       <Modal.Body>
         <Form onSubmit={formik.handleSubmit}>
-          <fieldset disabled={formik.isSubmitting}>
-            <Stack gap={2}>
-              <Form.Group controlId="formChannelName" className="position-relative">
-                <Form.Label visuallyHidden>{t('channels.name')}</Form.Label>
-                <Form.Control
-                  ref={inputRef}
-                  onChange={formik.handleChange}
-                  value={formik.values.channelName}
-                  data-testid="input-channelName"
-                  name="channelName"
-                  isInvalid={formik.touched.channelName && formik.errors.channelName}
-                />
-                <Form.Control.Feedback type="invalid" tooltip className="position-absolute">
-                  {formik.errors.channelName}
-                </Form.Control.Feedback>
-              </Form.Group>
-              <div className="d-flex justify-content-end">
-                <Button onClick={onHide} variant="secondary" className="me-2">{t('cancel')}</Button>
-                <Button type="submit" variant="primary">{t('messages.send')}</Button>
-              </div>
-            </Stack>
-          </fieldset>
+          <Form.Group>
+            <Form.Control
+              required
+              type="text"
+              ref={inputRef}
+              id="body"
+              name="body"
+              isInvalid={isInvalidName}
+              disabled={formik.isSubmitting}
+              onChange={formik.handleChange}
+              value={formik.values.body}
+            />
+            <Form.Label visuallyHidden htmlFor="body">
+              {t('modal.channelName')}
+            </Form.Label>
+            <Form.Control.Feedback type="invalid">
+              {formik.errors.body}
+            </Form.Control.Feedback>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                {t('cancel')}
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={formik.isSubmitting}
+              >
+                {t('send')}
+              </Button>
+            </Modal.Footer>
+          </Form.Group>
         </Form>
       </Modal.Body>
     </Modal>

@@ -1,146 +1,178 @@
-import axios from 'axios';
 import { useFormik } from 'formik';
-import React, { useEffect, useRef, useState } from 'react';
 import {
-  Button, Card, Col, Container, FloatingLabel, Form, Image, Row, Stack,
+  Card,
+  Form,
+  Button,
+  Row,
+  Col,
+  Container,
+  Image,
 } from 'react-bootstrap';
+import { useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import * as Yup from 'yup';
-import regPicture from '../assets/registration.jpg';
-import { useAuth } from '../contexts/index.jsx';
-import paths from '../routes.js';
+import { useRollbar } from '@rollbar/react';
+import img from '../assets/registration';
+import { apiRoutes, appPaths } from '../../routes.js';
+import { useAuth } from '../../hooks/index.js';
+import { SignupSchema } from '../../schemas/schemas.js';
 
-const useSubmit = (setSignupFailed, t) => {
-  const navigate = useNavigate();
-  const { logIn } = useAuth();
-  return async (values) => {
-    setSignupFailed(false);
-    try {
-      const res = await axios.post(paths.signup, values);
-      logIn(res.data);
-      navigate(paths.homePage);
-    } catch (err) {
-      if (!err.isAxiosError) throw err;
-      console.error(err);
-      if (err.response?.status === 409) setSignupFailed(true);
-      else toast.error(t('ConnectionError'));
-    }
-  };
-};
-
-const SignupPage = () => {
+const SignUp = () => {
   const { t } = useTranslation();
+  const [regError, setRegError] = useState(false);
+  const { logIn } = useAuth();
+  const navigate = useNavigate();
+  const inputName = useRef(null);
+  const rollbar = useRollbar();
 
-  const validationSchema = Yup.object().shape({
-    username: Yup.string().trim()
-      .min(3, t('login.symbolCount'))
-      .max(20, t('login.symbolCount'))
-      .required(t('login.requiredField')),
-    password: Yup.string().trim()
-      .min(6, t('login.minCountSymbols'))
-      .required(t('login.requiredField')),
-    passwordConfirmation: Yup.string()
-      .oneOf([Yup.ref('password'), null], t('login.matchPassword'))
-      .required(t('login.requiredField')),
-  });
-  const [signUpFailed, setSignUpFailed] = useState(false);
-
-  const inputRef = useRef();
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
   const formik = useFormik({
     initialValues: {
       username: '',
-      passsword: '',
-      passwordConfirmation: '',
+      password: '',
+      confirmPassword: '',
     },
-    validationSchema,
-    onSubmit: useSubmit(setSignUpFailed, t),
+
+    validationSchema: SignupSchema(
+      t('regRules.name'),
+      t('regRules.password'),
+      t('regRules.passwordEquality'),
+      t('errors.required'),
+    ),
+
+    onSubmit: async ({ username, password }) => {
+      setRegError(false);
+      try {
+        const { data } = await axios.post(apiRoutes.signUp(), {
+          username,
+          password,
+        });
+        logIn(data);
+        navigate(appPaths.chat);
+      } catch (error) {
+        if (error.code === 'ERR_NETWORK') {
+          toast.error(t('errors.network'));
+        }
+        if (error.response.status === 409) {
+          setRegError(true);
+        }
+        rollbar.error('signUp', error);
+      }
+    },
   });
+
+  useEffect(() => {
+    if (inputName.current) {
+      inputName.current.focus();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (inputName.current && regError) {
+      inputName.current.select();
+    }
+  }, [regError]);
+
+  const isInvalidUsername = formik.touched.username && formik.errors.username;
+  const isInvalidPassword = formik.touched.password && formik.errors.password;
+  const isInvalidConfirmPassword = formik.touched.confirmPassword && formik.errors.confirmPassword;
 
   return (
     <Container fluid className="h-100">
       <Row className="justify-content-center align-content-center h-100">
-        <Col xs="12" md="8" xxl="6">
-          <Card>
-            <Card.Body className="p-5">
-              <Row>
-                <Col className="d-flex align-items-center justify-content-center">
-                  <Image src={regPicture} roundedCircle thumbnail />
-                </Col>
-                <Col>
-                  <Form onSubmit={formik.handleSubmit}>
-                    <h1 className="text-center mb-4">{t('login.registration')}</h1>
-                    <fieldset disabled={formik.isSubmitting}>
-                      <Stack gap={2}>
-                        <FloatingLabel
-                          controlId="floatingUsername"
-                          label={t('login.username')}
-                          className="position-relative"
-                        >
-                          <Form.Control
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.username}
-                            placeholder={t('login.username')}
-                            name="username"
-                            autoComplete="username"
-                            isInvalid={signUpFailed
-                              || (formik.touched.username && formik.errors.username)}
-                            ref={inputRef}
-                          />
-                          {signUpFailed && (
-                          <Form.Control.Feedback type="invalid" tooltip className="position-absolute top-0 start-100">
-                            {t('login.userExist')}
-                          </Form.Control.Feedback>
-                          )}
-                          {formik.errors.username && (
-                          <Form.Control.Feedback type="invalid" tooltip>
-                            {t(formik.errors.username)}
-                          </Form.Control.Feedback>
-                          )}
-                        </FloatingLabel>
-                        <FloatingLabel controlId="floatingPassword" label={t('login.password')}>
-                          <Form.Control
-                            type="password"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.password}
-                            placeholder={t('login.password')}
-                            name="password"
-                            autoComplete="current-password"
-                            isInvalid={formik.touched.password && formik.errors.password}
-                          />
-                          <Form.Control.Feedback type="invalid" tooltip>
-                            {formik.errors.password}
-                          </Form.Control.Feedback>
-                        </FloatingLabel>
-                        <FloatingLabel controlId="floatingPasswordConfirmation" label="Подтвердите пароль">
-                          <Form.Control
-                            type="password"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.passwordConfirmation}
-                            placeholder={t('login.confirmPassword')}
-                            name="passwordConfirmation"
-                            autoComplete="current-passwordConfirmation"
-                            isInvalid={formik.touched.passwordConfirmation
-                  && formik.errors.passwordConfirmation}
-                          />
-                          <Form.Control.Feedback type="invalid" tooltip>
-                            {formik.errors.passwordConfirmation}
-                          </Form.Control.Feedback>
-                        </FloatingLabel>
-                        <Button type="submit" variant="outline-primary">{t('login.registration')}</Button>
-                      </Stack>
-                    </fieldset>
-                  </Form>
-                </Col>
-              </Row>
-            </Card.Body>
+        <Col className="col-12 col-md-8 col-xxl-6">
+          <Card className="text-center Login-card shadow">
+            <Card.Title className="mt-4">
+              <h1>{t('makeRegistration')}</h1>
+            </Card.Title>
+            <Row>
+              <Col className="col-md-6 d-flex align-items-center justify-content-center">
+                <Image width={350} height={350} src={img} rounded />
+              </Col>
+              <Col className="col-form d-flex flex-column align-items-center justify-content-center">
+                <Form onSubmit={formik.handleSubmit} className="w-75">
+                  <fieldset disabled={formik.isSubmitting}>
+                    <Form.Floating className="mb-4 align-self-center">
+                      <Form.Control
+                        required
+                        type="text"
+                        name="username"
+                        id="username"
+                        placeholder={t('placeholders.username')}
+                        onChange={formik.handleChange}
+                        value={formik.values.username}
+                        isInvalid={regError || isInvalidUsername}
+                        ref={inputName}
+                        isValid={
+                          formik.touched.username && !formik.errors.username
+                        }
+                        onBlur={formik.handleBlur}
+                      />
+                      <Form.Label htmlFor="name">
+                        {t('placeholders.username')}
+                      </Form.Label>
+                      <Form.Control.Feedback type="invalid">
+                        {formik.errors.username}
+                      </Form.Control.Feedback>
+                    </Form.Floating>
+                    <Form.Floating className="mb-4">
+                      <Form.Control
+                        required
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder={t('placeholders.password')}
+                        onChange={formik.handleChange}
+                        value={formik.values.password}
+                        isInvalid={regError || isInvalidPassword}
+                        isValid={
+                          formik.touched.password && !formik.errors.password
+                        }
+                        onBlur={formik.handleBlur}
+                      />
+                      <Form.Label htmlFor="password">
+                        {t('placeholders.password')}
+                      </Form.Label>
+                      <Form.Control.Feedback type="invalid">
+                        {formik.errors.password}
+                      </Form.Control.Feedback>
+                    </Form.Floating>
+                    <Form.Floating className="mb-4">
+                      <Form.Control
+                        required
+                        type="password"
+                        name="confirmPassword"
+                        id="confirmPassword"
+                        placeholder={t('placeholders.confirmPassword')}
+                        onChange={formik.handleChange}
+                        value={formik.values.confirmPassword}
+                        isInvalid={regError || isInvalidConfirmPassword}
+                        isValid={
+                          formik.touched.confirmPassword && !formik.errors.confirmPassword
+                        }
+                        onBlur={formik.handleBlur}
+                      />
+                      <Form.Label htmlFor="confirmPassword">
+                        {t('placeholders.confirmPassword')}
+                      </Form.Label>
+                      <Form.Control.Feedback type="invalid">
+                        {formik.errors.confirmPassword || t('errors.userExist')}
+                      </Form.Control.Feedback>
+                    </Form.Floating>
+                    <div className="d-grid">
+                      <Button
+                        type="submit"
+                        variant="outline-primary"
+                        className="mb-4"
+                      >
+                        {t('register')}
+                      </Button>
+                    </div>
+                  </fieldset>
+                </Form>
+              </Col>
+            </Row>
           </Card>
         </Col>
       </Row>
@@ -148,4 +180,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default SignUp;

@@ -1,42 +1,61 @@
 import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
+import { Modal, Button, Form } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { useChatApi } from '../../contexts/index.jsx';
+import { toast } from 'react-toastify';
+import { useRollbar } from '@rollbar/react';
+import { useSocket } from '../../hooks';
+import { actions as modalsActions } from '../../store/slices/modalsSlice';
 
-const Remove = ({ modalInfo: { item: channel }, onHide }) => {
+const Remove = () => {
+  const { isOpened, targetId } = useSelector((state) => state.modals);
+  const rollbar = useRollbar();
   const { t } = useTranslation();
-  const chatApi = useChatApi();
-  const [isSubmitting, setSubmitting] = useState(false);
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
+  const chatApi = useSocket();
+  const dispatch = useDispatch();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleClose = () => dispatch(modalsActions.close());
+
+  const hendleRemove = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
     try {
-      await chatApi.removeChannel({ id: channel.id });
-      onHide();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setSubmitting(false);
+      await chatApi.removeChannel({ id: targetId });
+      dispatch(modalsActions.close());
+      toast.success(t('success.removeChannel'));
+      setIsSubmitting(false);
+    } catch (error) {
+      toast.error(t('errors.channelRemove'));
+      rollbar.error('renameChannel', error);
+      setIsSubmitting(false);
     }
   };
+
   return (
-    <Modal show centered onHide={onHide} keyboard>
+    <Modal show={isOpened} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>{t('channels.deleteChannel')}</Modal.Title>
+        <Modal.Title>{t('modal.removeChannel')}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
-        <p className="lead">{t('channels.AUS')}</p>
-        <Form onSubmit={onSubmit}>
-          <fieldset disabled={isSubmitting}>
-            <div className="d-flex justify-content-end">
-              <Button onClick={onHide} variant="secondary" className="me-2">{t('cancel')}</Button>
-              <Button type="submit" variant="danger">{t('channels.delete')}</Button>
-            </div>
-          </fieldset>
-        </Form>
+        <Modal.Title>{t('modal.confirm')}</Modal.Title>
+        <Modal.Footer>
+          <Form onSubmit={hendleRemove}>
+            <Form.Group>
+              <Button
+                className="me-2"
+                variant="secondary"
+                onClick={handleClose}
+              >
+                {t('cancel')}
+              </Button>
+              <Button type="submit" variant="danger" disabled={isSubmitting}>
+                {t('modal.remove')}
+              </Button>
+            </Form.Group>
+          </Form>
+        </Modal.Footer>
       </Modal.Body>
     </Modal>
   );

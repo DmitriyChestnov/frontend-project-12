@@ -1,135 +1,164 @@
-import { useFormik } from 'formik';
-import axios from 'axios';
-import React, { useRef, useState, useEffect } from 'react';
-import * as yup from 'yup';
-import {
-  Button, Form,
-} from 'react-bootstrap';
+import { Formik } from 'formik';
+import { useNavigate, Link } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { toast } from 'react-toastify';
-import loginPicture from '../assets/login.jpg';
-import { useAuth } from '../contexts/index.jsx';
-import routes from '../routes.js';
+import { useRollbar } from '@rollbar/react';
+import {
+  Container,
+  Form,
+  Row,
+  Card,
+  Col,
+  Button,
+  Image,
+} from 'react-bootstrap';
 
-const useSubmit = (setAuthFailed, t) => {
+import { SigninSchema } from '../../schemas/schemas.js';
+import img from '../assets/login.js';
+import { apiRoutes, appPaths } from '../../routes.js';
+import { useAuth } from '../../hooks';
+
+const Login = () => {
+  const [authFailed, setAuthFailed] = useState(false);
+  const { t } = useTranslation();
   const { logIn } = useAuth();
   const navigate = useNavigate();
-  const inputRef = useRef();
-  return async (values) => {
+  const ref = useRef(null);
+  const rollbar = useRollbar();
+
+  const onSubmit = async (values) => {
     setAuthFailed(false);
     try {
-      const { data } = await axios.post(routes.login, values);
-      if (data.token) {
-        const user = { token: data.token, username: data.username };
-        logIn(user);
-        localStorage.setItem('userData', JSON.stringify(data.token));
-        navigate(routes.homePage);
+      const { data } = await axios.post(apiRoutes.login(), values);
+      logIn(data);
+      navigate(appPaths.chat);
+    } catch (err) {
+      if (err.isAxiosError) {
+        if (err.response.status === 401) {
+          setAuthFailed(true);
+        }
+        if (err.code === 'ERR_NETWORK') {
+          toast.error(t('errors.network'));
+        }
       }
-    } catch (error) {
-      if (!error.isAxiosError) {
-        toast.error(t('notFoundError'));
-        console.error(error);
-      }
-      if (error.isAxiosError && error.response?.status === 401) {
-        setAuthFailed(true);
-        inputRef.current.select();
-      } else {
-        toast.error(t('connectionError'));
-      }
+      rollbar.error('Login', err);
+      throw err;
     }
   };
-};
-
-const LoginPage = () => {
-  const { t } = useTranslation();
-  const validationSchema = yup.object().shape({
-    username: yup.string().trim()
-      .min(3, t('login.symbolCount'))
-      .max(20, t('login.symbolCount'))
-      .required(t('login.requiredField')),
-    password: yup.string().trim()
-      .required(t('login.requiredField')),
-  });
-  const [authFailed, setAuthFailed] = useState(false);
-  const inputRef = useRef();
 
   useEffect(() => {
-    inputRef.current.focus();
-  }, []);
-
-  const formik = useFormik({
-    initialValues: {
-      username: '',
-      password: '',
-    },
-    validationSchema,
-    onSubmit: useSubmit(setAuthFailed, t),
+    ref.current.focus();
   });
 
   return (
-    <div className="container-fluid h-100">
-      <div className="row justify-content-center align-content-center h-100">
-        <div className="col-12 col-md-8 col-xxl-6">
-          <div className="card shadow-sm">
-            <div className="card-body row p-5">
-              <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
-                <img
-                  src={loginPicture}
-                  alt="Welcome"
-                  className="rounded-circle"
-                />
-              </div>
-              <Form className="col-12 col-md-6 mt-3 mt-mb-0" onSubmit={formik.handleSubmit}>
-                <h1 className="text-center mb-4">{t('login.login')}</h1>
-                <fieldset disabled={formik.isSubmitting}>
-                  <Form.Group className="form-floating mb-3" controlId="username">
-                    <Form.Control
-                      name="username"
-                      type="username"
-                      placeholder={t('login.nick')}
-                      autoComplete="username"
-                      required
-                      autoFocus
-                      isInvalid={authFailed || (formik.touched.username && formik.errors.username)}
-                      onChange={formik.handleChange}
-                      value={formik.values.username}
-                      ref={inputRef}
-                    />
-                    <Form.Label className="form-label">{t('login.nick')}</Form.Label>
-                  </Form.Group>
-                  <Form.Group className="form-floating mb-4" controlId="password">
-                    <Form.Control
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      placeholder={t('login.password')}
-                      required
-                      isInvalid={authFailed || (formik.touched.password && formik.errors.password)}
-                      onChange={formik.handleChange}
-                      value={formik.values.password}
-                    />
-                    <Form.Label className="form-label">Пароль</Form.Label>
-                    <Form.Control.Feedback type="invalid" tooltip>
-                      {t('login.invalidUP')}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                  <Button className="w-100 mb-3" variant="outline-primary" type="submit">{t('login.login')}</Button>
-                </fieldset>
-              </Form>
-            </div>
-            <div className="card-footer p-4">
-              <div className="text-center">
-                <span>{t('login.haventAcc')}</span>
-                { ' ' }
-                <Link to={routes.signupPage}>{t('login.registration')}</Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Container fluid className="h-100 ">
+      <Row className="row justify-content-center align-items-center h-100">
+        <Col className="col-12 col-md-8 col-xxl-6">
+          <Card className="text-center Login-card shadow">
+            <Row>
+              <Col className="col-12 col-md-6 d-flex align-items-center justify-content-center">
+                <Image width={350} height={350} src={img} alt="login" />
+              </Col>
+              <Col className="col-form">
+                <Formik
+                  initialValues={{ username: '', password: '' }}
+                  validationSchema={SigninSchema(t('errors.required'))}
+                  className="w-100"
+                  onSubmit={onSubmit}
+                >
+                  {({
+                    errors,
+                    touched,
+                    values,
+                    handleChange,
+                    handleSubmit,
+                    handleBlur,
+                  }) => {
+                    const isInvalidUsername = touched.username && errors.username;
+                    const isInvalidPassword = touched.password && errors.password;
+                    return (
+                      <Form
+                        onSubmit={handleSubmit}
+                        className="col-12 col-md-11 mt-3 mt-mb-0"
+                      >
+                        <h1>{t('entry')}</h1>
+                        <Form.Floating md="11" className="mb-2">
+                          <Form.Control
+                            required
+                            type="text"
+                            name="username"
+                            value={values.username}
+                            onChange={handleChange}
+                            isInvalid={authFailed || isInvalidUsername}
+                            id="username"
+                            placeholder={t('placeholders.yourNickname')}
+                            ref={ref}
+                            onBlur={handleBlur}
+                          />
+                          <Form.Label htmlFor="username">
+                            {t('placeholders.yourNickname')}
+                          </Form.Label>
+                          {isInvalidUsername ? (
+                            <Form.Control.Feedback type="invalid">
+                              {errors.username}
+                            </Form.Control.Feedback>
+                          ) : null}
+                        </Form.Floating>
+                        <Form.Floating md="11">
+                          <Form.Control
+                            required
+                            type="password"
+                            name="password"
+                            value={values.password}
+                            onChange={handleChange}
+                            isInvalid={authFailed || isInvalidPassword}
+                            id="password"
+                            placeholder={t('placeholders.password')}
+                            onBlur={handleBlur}
+                          />
+                          <Form.Label htmlFor="password">
+                            {t('placeholders.password')}
+                          </Form.Label>
+                          {isInvalidPassword ? (
+                            <Form.Control.Feedback type="invalid">
+                              {errors.password}
+                            </Form.Control.Feedback>
+                          ) : null}
+                          {authFailed ? (
+                            <Form.Control.Feedback type="invalid">
+                              {t('invalidFeedback')}
+                            </Form.Control.Feedback>
+                          ) : null}
+                        </Form.Floating>
+                        <div className="d-grid gap-2 mb-4">
+                          <Button
+                            variant="outline-primary"
+                            className="Login-button mt-3"
+                            type="submit"
+                          >
+                            {t('entry')}
+                          </Button>
+                        </div>
+                      </Form>
+                    );
+                  }}
+                </Formik>
+              </Col>
+            </Row>
+            <Card.Footer className="p-4">
+              {t('noAccount')}
+              {' '}
+              <Link to={appPaths.signUp} className="footer-link">
+                {t('makeRegistration')}
+              </Link>
+            </Card.Footer>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
-export default LoginPage;
+export default Login;
