@@ -59,14 +59,7 @@ const App = () => {
             <Route path="*" element={<NotFound />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route
-              path="/"
-              element={(
-                <PrivateRoute>
-                  <Chat />
-                </PrivateRoute>
-              )}
-            />
+            <Route path="/" element={<PrivateRoute><Chat /></PrivateRoute>} />
           </Routes>
         </div>
       </BrowserRouter>

@@ -73,8 +73,8 @@ export default async () => {
   };
   const rollbarConfig = {
     accessToken: process.env.REACT_APP_ROLLBAR_TOKEN,
-    captureUncaught: true,
     environment: 'production',
+    captureUncaught: true,
   };
   return (
     <I18nextProvider i18n={i18nextInstance}>
