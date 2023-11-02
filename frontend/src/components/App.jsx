@@ -3,13 +3,13 @@ import {
   BrowserRouter, Routes, Route, Navigate,
 } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import NotFound from './components/NotFound.jsx';
-import Login from './components/Login/Login.jsx';
-import SignUp from './components/Signup/SignUp';
-import ChatPage from './components/Chat/ChatPage.jsx';
-import { appPaths } from './routes.js';
-import { useAuth } from './hooks';
-import Header from './components/Header/Header.jsx';
+import NotFound from './NotFound.jsx';
+import Login from './Login.jsx';
+import SignUp from './SignUp.jsx';
+import ChatPage from './Chat/ChatPage.jsx';
+import { appPaths } from '../routes.js';
+import { useAuth } from '../hooks/index.js';
+import Header from './Navbar.jsx';
 
 const DefaultRoute = ({ children }) => {
   const auth = useAuth();

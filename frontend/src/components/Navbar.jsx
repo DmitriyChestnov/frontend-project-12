@@ -1,8 +1,8 @@
 import { Container, Navbar, Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { appPaths } from '../../routes';
-import { useAuth } from '../../hooks';
+import { appPaths } from '../routes';
+import { useAuth } from '../hooks';
 
 const Header = () => {
   const { t } = useTranslation();

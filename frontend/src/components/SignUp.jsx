@@ -1,12 +1,6 @@
 import { useFormik } from 'formik';
 import {
-  Card,
-  Form,
-  Button,
-  Row,
-  Col,
-  Container,
-  Image,
+  Card, Form, Button, Row, Col, Container, Image,
 } from 'react-bootstrap';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
@@ -14,10 +8,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useRollbar } from '@rollbar/react';
-import img from '../assets/registration';
-import { apiRoutes, appPaths } from '../../routes.js';
-import { useAuth } from '../../hooks/index.js';
-import { SignupSchema } from '../../schemas/schemas.js';
+
+import img from '../assets/registrate.jpg';
+import { apiRoutes, appPaths } from '../routes.js';
+import { useAuth } from '../hooks/index.js';
+import { SignupSchema } from '../validate.js';
 
 const SignUp = () => {
   const { t } = useTranslation();
@@ -88,7 +83,7 @@ const SignUp = () => {
             </Card.Title>
             <Row>
               <Col className="col-md-6 d-flex align-items-center justify-content-center">
-                <Image width={350} height={350} src={img} rounded />
+                <Image src={img} roundedCircle />
               </Col>
               <Col className="col-form d-flex flex-column align-items-center justify-content-center">
                 <Form onSubmit={formik.handleSubmit} className="w-75">

@@ -11,7 +11,7 @@ export default {
     cancel: 'Отмена',
     send: 'Отправить',
     register: 'Зарегистрироваться',
-    exit: 'Выход',
+    exit: 'Выйти',
     name: 'Hexlet Chat',
     loading: 'Загрузка...',
     goMainPage: 'Перейти на главную',
@@ -22,7 +22,7 @@ export default {
     placeholders: {
       yourNickname: 'Ваш ник',
       password: 'Пароль',
-      newMessage: 'Введите сообщение',
+      newMessage: 'Введите сообщение...',
       username: 'Имя пользователя',
       confirmPassword: 'Подтвердите пароль',
     },

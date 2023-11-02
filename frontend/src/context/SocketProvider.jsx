@@ -1,4 +1,6 @@
-import { useCallback, useMemo, createContext } from 'react';
+import { useCallback, useMemo } from 'react';
+
+import { SocketContext } from './index';
 
 const SocketProvider = ({ socket, children }) => {
   const disconnectSocket = useCallback(() => {
@@ -23,7 +25,9 @@ const SocketProvider = ({ socket, children }) => {
   });
 
   const addChannel = asyncronizeSocket((...args) => socket.volatile.emit('newChannel', ...args));
+
   const removeChannel = asyncronizeSocket((...args) => socket.volatile.emit('removeChannel', ...args));
+
   const renameChannel = asyncronizeSocket((...args) => socket.volatile.emit('renameChannel', ...args));
 
   const socketContext = useMemo(
@@ -44,8 +48,6 @@ const SocketProvider = ({ socket, children }) => {
       disconnectSocket,
     ],
   );
-
-  const SocketContext = createContext({});
 
   return (
     <SocketContext.Provider value={socketContext}>

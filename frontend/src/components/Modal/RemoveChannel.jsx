@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useRollbar } from '@rollbar/react';
 import { useSocket } from '../../hooks';
-import { actions as modalsActions } from '../../store/slices/modalsSlice';
+import { actions as modalsActions } from '../../slices/modalsSlice';
 
 const Remove = () => {
   const { isOpened, targetId } = useSelector((state) => state.modals);

@@ -5,20 +5,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useRollbar } from '@rollbar/react';
-import { addChannelSchema } from '../../schemas/schemas';
-import { selectors as channelsSelectors } from '../../store/slices/channelsSlice';
+import { addChannelSchema } from '../../validate';
+import { selectors as channelsSelectors, actions as channelsActions } from '../../slices/channelsSlice';
 import { useSocket } from '../../hooks';
-import { actions as modalsActions } from '../../store/slices/modalsSlice';
+import { actions as modalsActions } from '../../slices/modalsSlice';
 
-const Rename = () => {
+const Add = () => {
   const channels = useSelector(channelsSelectors.selectChannelsNames);
   const isOpened = useSelector((state) => state.modals.isOpened);
-  const targetId = useSelector((state) => state.modals.targetId);
   const { t } = useTranslation();
   const chatApi = useSocket();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
-  const channelName = useSelector((state) => channelsSelectors.selectById(state, targetId)).name;
   const rollbar = useRollbar();
 
   useEffect(() => {
@@ -29,7 +27,7 @@ const Rename = () => {
 
   const formik = useFormik({
     initialValues: {
-      body: channelName,
+      body: '',
     },
     validationSchema: addChannelSchema(
       channels,
@@ -38,12 +36,13 @@ const Rename = () => {
     ),
     onSubmit: async ({ body }) => {
       try {
-        await chatApi.renameChannel({ id: targetId, name: body });
+        const data = await chatApi.addChannel({ name: body });
         dispatch(modalsActions.close());
-        toast.success(t('success.renameChannel'));
+        dispatch(channelsActions.switchChannel({ id: data.id }));
+        toast.success(t('success.newChannel'));
       } catch (error) {
-        toast.error(t('errors.channelRename'));
-        rollbar.error('renameChannel', error);
+        toast.error(t('errors.channelAdd'));
+        rollbar.error('AddChannel', error);
       }
     },
   });
@@ -54,7 +53,7 @@ const Rename = () => {
   return (
     <Modal show={isOpened} onHide={handleClose}>
       <Modal.Header>
-        <Modal.Title>{t('modal.rename')}</Modal.Title>
+        <Modal.Title>{t('modal.add')}</Modal.Title>
         <Button
           type="button"
           className="btn-close"
@@ -102,4 +101,4 @@ const Rename = () => {
   );
 };
 
-export default Rename;
+export default Add;

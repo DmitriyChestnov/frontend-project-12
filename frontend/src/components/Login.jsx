@@ -15,10 +15,10 @@ import {
   Image,
 } from 'react-bootstrap';
 
-import { SigninSchema } from '../../schemas/schemas.js';
-import img from '../assets/login.js';
-import { apiRoutes, appPaths } from '../../routes.js';
-import { useAuth } from '../../hooks';
+import { SigninSchema } from '../validate.js';
+import img from '../assets/login.jpg';
+import { apiRoutes, appPaths } from '../routes.js';
+import { useAuth } from '../hooks/index.js';
 
 const Login = () => {
   const [authFailed, setAuthFailed] = useState(false);
@@ -59,7 +59,7 @@ const Login = () => {
           <Card className="text-center Login-card shadow">
             <Row>
               <Col className="col-12 col-md-6 d-flex align-items-center justify-content-center">
-                <Image width={350} height={350} src={img} alt="login" />
+                <Image src={img} alt="login" roundedCircle />
               </Col>
               <Col className="col-form">
                 <Formik

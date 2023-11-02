@@ -2,33 +2,13 @@ import {
   createEntityAdapter,
   createSlice,
   createSelector,
-  createAsyncThunk,
 } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { apiRoutes } from '../routes.js';
+import fetchDataThunk from './thunk.js';
+
 import {
   selectors as channelsSelectors,
   actions as channelsActions,
 } from './channelsSlice.js';
-
-const fetchAllData = async (headers) => {
-  const { data } = await axios.get(apiRoutes.data(), headers);
-  return data;
-};
-
-const fetchDataThunk = createAsyncThunk(
-  'channels/fetchDataThunk',
-  async (header, { rejectWithValue }) => {
-    try {
-      return await fetchAllData(header);
-    } catch (error) {
-      return rejectWithValue({
-        message: error.message,
-        errorCode: error.response.status,
-      });
-    }
-  },
-);
 
 const messagesAdapter = createEntityAdapter();
 
@@ -64,9 +44,8 @@ const customSelectors = {
   selectAll: selectors.selectAll,
   selectById: createSelector(
     [selectors.selectAll, channelsSelectors.selectCurrentChannelId],
-    (messages, currentChannelId) => messages.filter(
-      ({ channelId }) => channelId === currentChannelId,
-    ),
+    // eslint-disable-next-line max-len
+    (messages, currentChannelId) => messages.filter(({ channelId }) => channelId === currentChannelId),
   ),
 };
 
