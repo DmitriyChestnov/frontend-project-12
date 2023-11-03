@@ -9,7 +9,7 @@ import SignUp from './SignUp.jsx';
 import ChatPage from './Chat/ChatPage.jsx';
 import { appPaths } from '../routes.js';
 import { useAuth } from '../hooks/index.js';
-import Header from './Navbar.jsx';
+import Navbar from './Navbar.jsx';
 
 const DefaultRoute = ({ children }) => {
   const auth = useAuth();
@@ -20,7 +20,7 @@ const App = () => (
   <div className="d-flex flex-column h-100">
     <ToastContainer />
     <BrowserRouter>
-      <Header />
+      <Navbar />
       <Routes>
         <Route path={appPaths.login} element={<Login />} />
         <Route path={appPaths.signUp} element={<SignUp />} />

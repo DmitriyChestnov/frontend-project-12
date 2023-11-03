@@ -36,6 +36,7 @@ const Channel = ({ isActive, channel }) => {
             onClick={switchHandler}
           >
             <span>#</span>
+            {' '}
             {channelName}
           </Button>
 
@@ -64,6 +65,7 @@ const Channel = ({ isActive, channel }) => {
           onClick={switchHandler}
         >
           <span>#</span>
+          {' '}
           {channelName}
         </Button>
       )}

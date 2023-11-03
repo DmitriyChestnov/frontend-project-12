@@ -7,13 +7,14 @@ import {
   Provider as RollbarProvider,
   ErrorBoundary as ErrorBoundaryProvider,
 } from '@rollbar/react';
+
 import App from './components/App.jsx';
 import resources from './locales';
 import AuthProvider from './context/AuthProvider.jsx';
 import store from './slices/index.js';
 import SocketProvider from './context/SocketProvider.jsx';
 import WordFilterProvider from './context/WordFilterProvider';
-import rollbarConfig from './configs/rollbarConfig';
+import rollbarConfig from './rollbarConfig.js';
 
 const init = async () => {
   const websocket = io();

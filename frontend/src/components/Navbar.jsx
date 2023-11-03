@@ -1,7 +1,7 @@
 import { Container, Navbar, Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { appPaths } from '../routes';
+import { appPaths } from '../routes.js';
 import { useAuth } from '../hooks';
 
 const Header = () => {

@@ -78,14 +78,14 @@ const SignUp = () => {
       <Row className="justify-content-center align-content-center h-100">
         <Col className="col-12 col-md-8 col-xxl-6">
           <Card className="text-center Login-card shadow">
-            <Card.Title className="mt-4">
-              <h1>{t('makeRegistration')}</h1>
-            </Card.Title>
             <Row>
               <Col className="col-md-6 d-flex align-items-center justify-content-center">
                 <Image src={img} roundedCircle />
               </Col>
               <Col className="col-form d-flex flex-column align-items-center justify-content-center">
+                <Card.Title className="mt-4">
+                  <h1>{t('makeRegistration')}</h1>
+                </Card.Title>
                 <Form onSubmit={formik.handleSubmit} className="w-75">
                   <fieldset disabled={formik.isSubmitting}>
                     <Form.Floating className="mb-4 align-self-center">

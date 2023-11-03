@@ -1,6 +1,6 @@
 import { useWordFilter } from '../../../hooks';
 
-const Messages = ({ message }) => {
+const Message = ({ message }) => {
   const filterProfanity = useWordFilter();
 
   return (
@@ -12,4 +12,4 @@ const Messages = ({ message }) => {
   );
 };
 
-export default Messages;
+export default Message;

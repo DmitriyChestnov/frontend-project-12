@@ -4,8 +4,6 @@ export default {
     makeRegistration: 'Регистрация',
     noAccount: 'Нет аккаунта?',
     invalidFeedback: 'Неверные имя пользователя или пароль',
-    codeNotFound: '404',
-    pageNotFound: 'Страница не найдена',
     channelsTitle: 'Каналы',
     messageCannotEmpty: 'Сообщение не может быть пустым',
     cancel: 'Отмена',
@@ -14,7 +12,6 @@ export default {
     exit: 'Выйти',
     name: 'Hexlet Chat',
     loading: 'Загрузка...',
-    goMainPage: 'Перейти на главную',
     error: 'Ошибка',
     update: 'Обновить',
     reauthorization: 'Переавторизоваться',
@@ -62,6 +59,11 @@ export default {
       newChannel: 'Канал создан',
       renameChannel: 'Канал переименован',
       removeChannel: 'Канал удалён',
+    },
+    notFound: {
+      pageNotFound: 'Страница не найдена',
+      canGo: 'Но вы можете перейти',
+      toMainPage: 'на главную страницу',
     },
   },
 };

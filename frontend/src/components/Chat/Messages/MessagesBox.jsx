@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useRef, useEffect } from 'react';
 
 import { useWordFilter } from '../../../hooks';
-import Messages from './Messages.jsx';
+import Message from './Message.jsx';
 import MessageInput from './MessageInput.jsx';
 import { selectors as channelsSelectors } from '../../../slices/channelsSlice.js';
 import { selectors as messagesSelectors } from '../../../slices/messagesSlice.js';
@@ -28,6 +28,7 @@ const MessagesBox = () => {
           <p className="m-0">
             <b>
               #
+              {' '}
               {channelName}
             </b>
           </p>
@@ -37,7 +38,7 @@ const MessagesBox = () => {
         </div>
         <div className="chat-messages overflow-auto px-5" ref={messagesRef}>
           {currentMessages.map((message) => (
-            <Messages key={message.id} message={message} />
+            <Message key={message.id} message={message} />
           ))}
         </div>
         <MessageInput />
