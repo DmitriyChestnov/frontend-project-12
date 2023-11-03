@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
-import { apiRoutes } from '../../routes';
+import routes from '../../routes';
 import { useAuth } from '../../hooks';
 
 const Error = () => {
@@ -15,7 +15,7 @@ const Error = () => {
   );
 
   const handleAuthError = () => {
-    navigate(apiRoutes.login);
+    navigate(routes.login());
     logOut();
   };
 

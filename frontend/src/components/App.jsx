@@ -3,17 +3,18 @@ import {
   BrowserRouter, Routes, Route, Navigate,
 } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+
+import routes from '../routes.js';
+import { useAuth } from '../hooks/index.js';
+import Navbar from './Navbar.jsx';
 import NotFound from './NotFound.jsx';
 import Login from './Login.jsx';
 import SignUp from './SignUp.jsx';
 import ChatPage from './Chat/ChatPage.jsx';
-import { appPaths } from '../routes.js';
-import { useAuth } from '../hooks/index.js';
-import Navbar from './Navbar.jsx';
 
 const DefaultRoute = ({ children }) => {
   const auth = useAuth();
-  return auth.user ? children : <Navigate to={appPaths.login} />;
+  return auth.user ? children : <Navigate to={routes.loginPage()} />;
 };
 
 const App = () => (
@@ -22,10 +23,10 @@ const App = () => (
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route path={appPaths.login} element={<Login />} />
-        <Route path={appPaths.signUp} element={<SignUp />} />
+        <Route path={routes.loginPage()} element={<Login />} />
+        <Route path={routes.signUpPage()} element={<SignUp />} />
         <Route
-          path={appPaths.chat}
+          path={routes.chatPage()}
           element={(
             <DefaultRoute>
               <ChatPage />

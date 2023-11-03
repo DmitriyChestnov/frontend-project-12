@@ -1,7 +1,8 @@
 import { Container, Navbar, Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { appPaths } from '../routes.js';
+
+import routes from '../routes.js';
 import { useAuth } from '../hooks';
 
 const Header = () => {
@@ -11,10 +12,10 @@ const Header = () => {
   return (
     <Navbar bg="white" className="shadow-sm">
       <Container>
-        <Navbar.Brand as={Link} to={appPaths.chat}>{t('name')}</Navbar.Brand>
+        <Navbar.Brand as={Link} to={routes.chatPage()}>{t('name')}</Navbar.Brand>
         {auth.user ? (
           <Button
-            href={appPaths.login}
+            href={routes.loginPage()}
             variant="outline-primary"
             onClick={auth.logOut}
           >

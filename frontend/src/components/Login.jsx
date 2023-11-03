@@ -6,18 +6,12 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useRollbar } from '@rollbar/react';
 import {
-  Container,
-  Form,
-  Row,
-  Card,
-  Col,
-  Button,
-  Image,
+  Container, Form, Row, Card, Col, Button, Image,
 } from 'react-bootstrap';
 
 import { SigninSchema } from '../validate.js';
 import img from '../assets/login.jpg';
-import { apiRoutes, appPaths } from '../routes.js';
+import routes from '../routes.js';
 import { useAuth } from '../hooks/index.js';
 
 const Login = () => {
@@ -31,9 +25,9 @@ const Login = () => {
   const onSubmit = async (values) => {
     setAuthFailed(false);
     try {
-      const { data } = await axios.post(apiRoutes.login(), values);
+      const { data } = await axios.post(routes.login(), values);
       logIn(data);
-      navigate(appPaths.chat);
+      navigate(routes.chatPage());
     } catch (err) {
       if (err.isAxiosError) {
         if (err.response.status === 401) {
@@ -150,7 +144,7 @@ const Login = () => {
             <Card.Footer className="p-4">
               {t('noAccount')}
               {' '}
-              <Link to={appPaths.signUp} className="footer-link">
+              <Link to={routes.signUpPage()} className="footer-link">
                 {t('makeRegistration')}
               </Link>
             </Card.Footer>

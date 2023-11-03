@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { apiRoutes } from '../routes.js';
+import routes from '../routes.js';
 
 const fetchAllData = async (headers) => {
-  const { data } = await axios.get(apiRoutes.data(), headers);
+  const { data } = await axios.get(routes.data(), headers);
   return data;
 };
 

@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import { useRollbar } from '@rollbar/react';
 
 import img from '../assets/registrate.jpg';
-import { apiRoutes, appPaths } from '../routes.js';
+import routes from '../routes.js';
 import { useAuth } from '../hooks/index.js';
 import { SignupSchema } from '../validate.js';
 
@@ -39,12 +39,12 @@ const SignUp = () => {
     onSubmit: async ({ username, password }) => {
       setRegError(false);
       try {
-        const { data } = await axios.post(apiRoutes.signUp(), {
+        const { data } = await axios.post(routes.signUp(), {
           username,
           password,
         });
         logIn(data);
-        navigate(appPaths.chat);
+        navigate(routes.chatPage());
       } catch (error) {
         if (error.code === 'ERR_NETWORK') {
           toast.error(t('errors.network'));

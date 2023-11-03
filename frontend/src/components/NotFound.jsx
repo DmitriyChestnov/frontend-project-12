@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { appPaths } from '../routes.js';
+import routes from '../routes.js';
 
 const NotFound = () => {
   const { t } = useTranslation();
@@ -11,7 +11,7 @@ const NotFound = () => {
       <p className="text-muted">
         {t('notFound.canGo')}
         { ' ' }
-        <Link to={appPaths.login}>{t('notFound.toMainPage')}</Link>
+        <Link to={routes.loginPage()}>{t('notFound.toMainPage')}</Link>
       </p>
     </div>
   );

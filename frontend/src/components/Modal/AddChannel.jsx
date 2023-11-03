@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useRollbar } from '@rollbar/react';
+
 import { addChannelSchema } from '../../validate';
 import { selectors as channelsSelectors, actions as channelsActions } from '../../slices/channelsSlice';
 import { useSocket } from '../../hooks';
