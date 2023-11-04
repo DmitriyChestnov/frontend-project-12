@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 
-import ChannelsBox from './Channels/ChannelsBox';
-import MessagesBox from './Messages/MessagesBox';
+import ChannelsBox from './ChannelsBox';
+import MessagesBox from './MessagesBox';
 import Loading from './Loading';
 import Error from './Error';
 
