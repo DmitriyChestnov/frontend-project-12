@@ -3,7 +3,7 @@ import {
   createSlice,
   createSelector,
 } from '@reduxjs/toolkit';
-import fetchDataThunk from './thunk.js';
+import fetchDataThunk from '../thunk.js';
 
 import {
   selectors as channelsSelectors,
@@ -44,8 +44,9 @@ const customSelectors = {
   selectAll: selectors.selectAll,
   selectById: createSelector(
     [selectors.selectAll, channelsSelectors.selectCurrentChannelId],
-    // eslint-disable-next-line max-len
-    (messages, currentChannelId) => messages.filter(({ channelId }) => channelId === currentChannelId),
+    (messages, currentChannelId) => messages.filter((
+      { channelId },
+    ) => channelId === currentChannelId),
   ),
 };
 

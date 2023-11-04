@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import ChatBox from './ChatBox.jsx';
 import getModalComponent from '../Modal/index.js';
-import fetchDataThunk from '../../slices/thunk.js';
+import fetchDataThunk from '../../thunk.js';
 import { useAuth, useSocket } from '../../hooks';
 import { selectors as modalsSelectors } from '../../slices/modalsSlice.js';
 import { actions as channelsActions } from '../../slices/channelsSlice.js';

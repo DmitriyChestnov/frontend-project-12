@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
-import fetchDataThunk from './thunk.js';
+import fetchDataThunk from '../thunk.js';
 
 const statuses = {
   notLoaded: 'notLoaded',
