@@ -7,9 +7,9 @@ import { useTranslation } from 'react-i18next';
 import { useRollbar } from '@rollbar/react';
 import { toast } from 'react-toastify';
 
-import { useAuth, useSocket } from '../../../hooks';
-import { selectors as channelsSelectors } from '../../../slices/channelsSlice.js';
-import { messageShema } from '../../../validate.js';
+import { useAuth, useSocket } from '../../hooks/index.js';
+import { selectors as channelsSelectors } from '../../slices/channelsSlice.js';
+import { messageShema } from '../../validate.js';
 
 const MessageForm = () => {
   const { t } = useTranslation();

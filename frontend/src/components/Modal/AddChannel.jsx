@@ -6,9 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useRollbar } from '@rollbar/react';
 
+import { useSocket } from '../../hooks';
 import { addChannelSchema } from '../../validate';
 import { selectors as channelsSelectors, actions as channelsActions } from '../../slices/channelsSlice';
-import { useSocket } from '../../hooks';
 import { actions as modalsActions } from '../../slices/modalsSlice';
 
 const Add = () => {

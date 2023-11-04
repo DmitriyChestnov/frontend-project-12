@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { useRef, useEffect } from 'react';
 
-import { useWordFilter } from '../../../hooks';
+import { useWordFilter } from '../../hooks/index.js';
 import Message from './Message.jsx';
 import MessageInput from './MessageInput.jsx';
-import { selectors as channelsSelectors } from '../../../slices/channelsSlice.js';
-import { selectors as messagesSelectors } from '../../../slices/messagesSlice.js';
+import { selectors as channelsSelectors } from '../../slices/channelsSlice.js';
+import { selectors as messagesSelectors } from '../../slices/messagesSlice.js';
 
 const MessagesBox = () => {
   const { t } = useTranslation();

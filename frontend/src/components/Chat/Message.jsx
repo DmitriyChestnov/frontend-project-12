@@ -1,4 +1,4 @@
-import { useWordFilter } from '../../../hooks';
+import { useWordFilter } from '../../hooks';
 
 const Message = ({ message }) => {
   const filterProfanity = useWordFilter();

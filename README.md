@@ -2,7 +2,7 @@
 [![Actions Status](https://github.com/DmitriyChestnov/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/DmitriyChestnov/frontend-project-12/actions)
 ## Description:
 
-Simplified analog of slack chat.
+Simplified analog of slack chat. In the chat room, you can register, log in as a user, write messages, create, rename, and delete channels.
 
 ## Setup:
 
