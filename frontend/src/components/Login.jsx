@@ -1,6 +1,6 @@
 import { Formik } from 'formik';
 import { useNavigate, Link } from 'react-router-dom';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -41,10 +41,6 @@ const Login = () => {
       throw err;
     }
   };
-
-  useEffect(() => {
-    ref.current.focus();
-  });
 
   return (
     <Container fluid className="h-100 ">
