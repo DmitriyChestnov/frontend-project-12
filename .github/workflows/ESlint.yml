@@ -1,4 +1,4 @@
-name: linter-check
+name: ESlint
 
 on:
   push:
