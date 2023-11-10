@@ -27,6 +27,10 @@ const ChatPage = () => {
       logOut();
     }
 
+    if (error?.errorCode === 401) {
+      logOut();
+    }
+
     return () => socketConstext.disconnectSocket();
   }, [dispatch, socketConstext, authHeaders, error, logOut]);
 
